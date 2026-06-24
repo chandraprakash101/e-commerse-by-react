@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Search } from 'lucide-react'
 
 const Searchbar = () => {
@@ -11,15 +11,23 @@ const Searchbar = () => {
     setSearchQuery(inputText);
   }
   async function getData() {
-    if (searchQuery.length === 0) return
+    if (searchQuery.length === 0) return;
+    console.log("Api call for ", searchQuery)
     const data = await fetch(`https://dummyjson.com/products/search?q=${searchQuery}`)
     const jsonData = await data.json();
     setSearchQueryArr(jsonData.products);
     console.log(jsonData.products)
   }
 
+  let timerId = useRef(null)
   useEffect(() => {
-    getData();
+    if(timerId.current){
+      clearTimeout(timerId.current);
+    }
+    timerId.current = setTimeout(()=>{
+       getData();
+    },400)
+   
   }, [searchQuery])
 
   return (
