@@ -1,158 +1,137 @@
-<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+import React, { useEffect, useRef, useState } from 'react';
+import { Search, X } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 
-          {/* Logo */}
-          <div className="flex-shrink-0 flex items-center">
-            <span className="text-2xl font-bold text-indigo-600 tracking-wide cursor-pointer">
-              ShopEase
-            </span>
-          </div>
+const Searchbar = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQueryArr, setSearchQueryArr] = useState([]);
+  const [activeSuggestionInd, setActiveSuggestionInd] = useState(-1);
+  const navigate = useNavigate();
 
-          {/* Search Bar - Desktop (Hidden on Mobile) */}
-          <div className="hidden md:flex flex-1 max-w-md mx-8">
-            <div className="relative w-full">
-              <input
-                type="text"
-                placeholder="Search products..."
-                className="w-full px-4 py-1.5 bg-gray-100 text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
-              />
-              <Search className="absolute right-3 top-2 w-4 h-4 text-gray-500 cursor-pointer" />
-            </div>
-          </div>
+  // 1. Dropdown Container aur saare items ke liye Refs banayein
+  const containerRef = useRef(null);
+  const itemsRef = useRef([]);
 
-          {/* Navigation Links - Desktop */}
-          <div className="hidden lg:flex space-x-8 font-medium text-gray-600">
-            <a href="#" className="hover:text-indigo-600 transition-colors">Home</a>
-            <a href="#" className="hover:text-indigo-600 transition-colors">Shop</a>
-            <a href="#" className="hover:text-indigo-600 transition-colors">Categories</a>
-            <a href="#" className="hover:text-indigo-600 transition-colors">Deals</a>
-          </div>
+  // .trim() ko input se hata diya taaki type karte waqt beech me space block na ho
+  function handleText(e) {
+    let inputText = e.target.value; 
+    setSearchQuery(inputText);
+    setActiveSuggestionInd(-1); // Naya text type hote hi index reset
+  }
 
-          {/* Right Side Icons (Cart, Wishlist, Profile) */}
-          <div className="hidden md:flex items-center space-x-6 text-gray-600">
-            <button className="hover:text-indigo-600 transition-colors relative">
-              <Heart className="w-6 h-6" />
-              <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">0</span>
-            </button>
-            <button className="hover:text-indigo-600 transition-colors relative">
-              <ShoppingCart className="w-6 h-6" />
-              <span className="absolute -top-1 -right-2 bg-indigo-600 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">3</span>
-            </button>
-            <button className="hover:text-indigo-600 transition-colors">
-              <User className="w-6 h-6" />
-            </button>
-          </div>
+  async function getData() {
+    if (searchQuery.trim().length === 0) return;
+    console.log("Api call for ", searchQuery);
+    const data = await fetch(`https://dummyjson.com/products/search?q=${searchQuery}`);
+    const jsonData = await data.json();
+    setSearchQueryArr(jsonData.products || []);
+  }
 
-          {/* Hamburger Menu Button - Mobile only */}
-          <div className="md:hidden flex items-center space-x-4">
-            {/* Cart Icon on Mobile Menu Bar for quick access */}
-            <button className="text-gray-600 relative pt-1">
-              <ShoppingCart className="w-6 h-6" />
-              <span className="absolute -top-1 -right-2 bg-indigo-600 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">3</span>
-            </button>
+  // 2. Arrow keys se automatic scroll karne ka magic logic
+  useEffect(() => {
+    if (activeSuggestionInd >= 0 && itemsRef.current[activeSuggestionInd]) {
+      itemsRef.current[activeSuggestionInd].scrollIntoView({
+        behavior: 'smooth',  // Smooth scroll hoga
+        block: 'nearest',   // Jo sabse pass ka edge hoga wahan tak scroll karega
+      });
+    }
+  }, [activeSuggestionInd]); // Jab bhi index badlega, ye chalega
 
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-600 hover:text-indigo-600 focus:outline-none"
-            >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
+  function handleKeyDown(e) {
+    if (e.key === "ArrowUp") {
+      e.preventDefault(); // Input cursor ko start me jaane se rokne ke liye
+      console.log("ArrowUp Pressed");
+      if (activeSuggestionInd - 1 >= 0) {
+        setActiveSuggestionInd(activeSuggestionInd - 1);
+      }
+    } 
+    else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      console.log("ArrowDown Pressed");
+      if (activeSuggestionInd + 1 < searchQueryArr.length) {
+        setActiveSuggestionInd(activeSuggestionInd + 1);
+      }
+    } 
+    else if (e.key === "Enter") {
+      // BUG FIX: Pehle check karo ki kya koi item select hai bhi ya nahi (-1 par block karo)
+      if (activeSuggestionInd >= 0 && searchQueryArr[activeSuggestionInd]) {
+        const selectedQuery = searchQueryArr[activeSuggestionInd];
+        setSearchQuery(selectedQuery.title);
+        setSearchQueryArr([]);
+        navigate(`/product/${selectedQuery.id}`);
+      } else if (searchQuery.trim().length > 0) {
+        // Agar kuch select nahi hai aur sirf enter mara, toh search page par bhej do
+        navigate(`/search?q=${searchQuery}`);
+        setSearchQueryArr([]);
+      }
+    }
+  }
 
-        </div>
-      </div>
+  function clearInputText() {
+    setSearchQuery("");
+    setSearchQueryArr([]);
+    setActiveSuggestionInd(-1);
+  }
 
-      {/* Mobile Menu Dropdown */}
-      {isOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 px-4 pt-2 pb-4 space-y-3 shadow-lg">
-          {/* Mobile Search Bar */}
-          <div className="relative w-full my-2">
-            <input
-              type="text"
-              placeholder="Search products..."
-              className="w-full px-4 py-2 bg-gray-100 text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
-            />
-            <Search className="absolute right-3 top-2.5 w-4 h-4 text-gray-500" />
-          </div>
+  let timerId = useRef(null);
+  useEffect(() => {
+    if (timerId.current) {
+      clearTimeout(timerId.current);
+    }
+    if (searchQuery.trim().length > 0) {
+      timerId.current = setTimeout(() => {
+        getData();
+      }, 400);
+    } else {
+      setSearchQueryArr([]);
+    }
 
-          {/* Mobile Links */}
-          <a href="#" className="block text-gray-600 hover:text-indigo-600 font-medium py-2 border-b border-gray-50">Home</a>
-          <a href="#" className="block text-gray-600 hover:text-indigo-600 font-medium py-2 border-b border-gray-50">Shop</a>
-          <a href="#" className="block text-gray-600 hover:text-indigo-600 font-medium py-2 border-b border-gray-50">Categories</a>
-          <a href="#" className="block text-gray-600 hover:text-indigo-600 font-medium py-2 border-b border-gray-50">Deals</a>
-
-          {/* Mobile Profile/Wishlist Links */}
-          <div className="flex justify-between pt-2 text-gray-600">
-            <a href="#" className="flex items-center space-x-2 hover:text-indigo-600">
-              <Heart className="w-5 h-5" /> <span>Wishlist</span>
-            </a>
-            <a href="#" className="flex items-center space-x-2 hover:text-indigo-600">
-              <User className="w-5 h-5" /> <span>Profile</span>
-            </a>
-          </div>
-        </div>
-      )}
-
-
-
-
-      import React, { useState } from 'react';
-import { Menu, X, ShoppingCart, Search } from 'lucide-react';
-
-// Chote components ko import karein
-import Logo from './Logo';
-import NavLinks from './NavLinks';
-import NavIcons from './NavIcons';
-import MobileMenu from './MobileMenu';
-
-const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+    return () => clearTimeout(timerId.current);
+  }, [searchQuery]);
 
   return (
-    <nav className="bg-white shadow-md fixed w-full top-0 left-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          
-          {/* 1. Logo */}
-          <Logo />
-
-          {/* Desktop Search Bar */}
-          <div className="hidden md:flex flex-1 max-w-md mx-8">
-            <div className="relative w-full">
-              <input
-                type="text"
-                placeholder="Search products..."
-                className="w-full px-4 py-1.5 bg-gray-100 text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
-              />
-              <Search className="absolute right-3 top-2 w-4 h-4 text-gray-500 cursor-pointer" />
-            </div>
-          </div>
-
-          {/* 2. Desktop Navigation Links */}
-          <NavLinks />
-
-          {/* 3. Desktop Action Icons */}
-          <NavIcons />
-
-          {/* Mobile Hamburger & Cart Button */}
-          <div className="md:hidden flex items-center space-x-4">
-            <button className="text-gray-600 relative pt-1">
-              <ShoppingCart className="w-6 h-6" />
-              <span className="absolute -top-1 -right-2 bg-indigo-600 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">3</span>
-            </button>
-            
-            <button onClick={() => setIsOpen(!isOpen)} className="text-gray-600 hover:text-indigo-600">
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-
-        </div>
+    <div className='w-full h-full relative items-center'>
+      <div className='w-full h-full flex relative items-center'>
+        <input 
+          onChange={handleText} 
+          onKeyDown={handleKeyDown}
+          value={searchQuery}
+          className='w-full h-full border-none outline-none px-2 bg-gray-100 text-gray-900 rounded-xl focus:ring-2 focus:ring-indigo-500'
+          type="text"
+          placeholder='Enter Your Items ' 
+        />
+        {searchQuery.trim().length !== 0 ? (
+          <X className='absolute right-2 cursor-pointer text-gray-500' onClick={clearInputText}/>
+        ) : (
+          <Search className='absolute right-2 text-gray-400' />
+        )}
       </div>
 
-      {/* 4. Mobile Dropdown Menu Component */}
-      <MobileMenu isOpen={isOpen} />
-    </nav>
+      {/* 3. SCROLLBAR HIDE CLASSES: Is div me scrollbar chhipane ke liye custom classes lagayi hain */}
+      {searchQuery.trim().length !== 0 && searchQueryArr.length > 0 && (
+        <div 
+          ref={containerRef}
+          className='absolute left-0 top-full w-full overflow-y-auto max-h-60 flex flex-col gap-1 bg-white shadow-xl rounded-b-sm z-50 border border-t-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'
+        >
+          {searchQueryArr.map((productArr, index) => {
+            return (
+              <Link 
+                to={`/product/${productArr.id}`} 
+                key={productArr.id}
+                // Har item ka reference array me store kar rahe hain
+                ref={el => itemsRef.current[index] = el}
+                onClick={() => setSearchQueryArr([])}
+              >
+                <p className={`m-1 ${activeSuggestionInd === index ? "bg-indigo-500 text-white" : "bg-gray-100 text-gray-800"} rounded-sm cursor-pointer p-2 hover:bg-indigo-400 hover:text-white text-sm transition-colors`} >
+                  {productArr.title}
+                </p>
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 };
 
-export default Navbar;
+// export default Searchbar;
