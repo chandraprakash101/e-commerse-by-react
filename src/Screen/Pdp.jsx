@@ -1,8 +1,9 @@
 
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Heart, ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Star, Truck, ShieldCheck, RotateCcw, PackageCheck } from 'lucide-react';
 
 const Pdp = () => {
 
@@ -12,6 +13,13 @@ const Pdp = () => {
 
   const discountedPrice = productData?.price;
   const originalPrice = productData?.discountPercentage ? productData?.price / (1 - productData?.discountPercentage / 100) : productData?.price;
+
+  const infoItems = [
+    {icon: PackageCheck, label: "Availability", value:productData?.availabilityStatus},
+    {icon: Truck, label: "Shipping", value:productData?.availabilityStatus},
+    {icon: ShieldCheck, label : "Warranty", value:productData?.availabilityStatus},
+    {icon: RotateCcw, label: "Returns", value:productData?.availabilityStatus}
+  ] 
 
   async function getData() {
     const apiRes = await fetch(`https://dummyjson.com/products/${id}`)
@@ -27,7 +35,7 @@ const Pdp = () => {
     <div className='border border-blue-500 bg-gray-50 mt-12 p-5'>
       <Link to="/" > <div className='flex  py-4 gap-2 text-blue-500 font-bold'><ChevronLeft /><p> Back to products</p></div>
       </Link>
-      <div className='bg-white md:flex'>
+      <div className='bg-white md:flex gap-1 '>
         {/* first containor */}
       <div className=' md:flex md:flex-row-reverse bg-white'>
         <div className='bg-gray-100 border border-pink-400'>
@@ -48,7 +56,7 @@ const Pdp = () => {
 
 
       {/* Second containor */}
-      <div className='bg-white'>
+      <div className='bg-white md:mx-2.5'>
         {/* Brand and category DONE.... */}
         <div className='flex gap-5 text-xs'>
           <span className='bg-gray-100 font-bold rounded-xl p-1.5'>{productData?.category}</span>
@@ -56,32 +64,50 @@ const Pdp = () => {
         </div>
         {/* title and reating */}
         
-          <h2 className='font-bold text-lg '>{productData?.title}</h2>
+          <h2 className='font-bold text-lg'>{productData?.title}</h2>
         {/* Rating and In-stock value */}
-        <div>
-          <span>✨{productData?.rating}</span>
-          <span>{productData?.stock}</span>
+        <div className='flex gap-4'>
+          <div className="flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-amber-600 border border-amber-200">
+                 <Star className="h-4 w-4 fill-current" />
+                 <span className="text-sm font-bold">{productData?.rating}</span>
+          </div>
+          <span className={`text-sm font-bold rounded-full px-2 py-1 ${productData?.rating > 0 ? "bg-green-100 text-green-400" : "bg-red-100 text-red-400"}`}>In stock: {productData?.stock}</span>
         </div>
         {/* final price */}
-        <div className=' bg-gray-100'>
+        <div className=' bg-gray-100 px-3 py-2 rounded-xl flex gap-3 items-baseline '>
            <span className="text-3xl font-black text-gray-900">${discountedPrice?.toFixed(2)}</span>
-          <span className=''>${originalPrice?.toFixed(2)}</span>
+          <span className='line-through text-gray-500'>${originalPrice?.toFixed(2)}</span>
         </div>
-        <div>
-          <p  >{productData?.description}</p>
+        <div className='font-semibold text-gray-500 text-sm'>
+          <p>{productData?.description}</p>
         </div>
         {/* some  */}
-        <div>
-          <p>{productData?.stock}</p>
-          <p>{productData?.shippingInformation}</p>
-          <p>{productData?.availabilityStatus}</p>
-          <p>{productData?.warrantyInformation}</p>
-          <p>{productData?.returnPolicy}</p>
-        </div>
+        {/* <div className=''>
+          <p className='bg-gray-50'><PackageCheck /> {productData?.availabilityStatus}</p>
+          <p className='bg-gray-50'><Truck /> {productData?.shippingInformation}</p>
+          <p className='bg-gray-50'><ShieldCheck /> {productData?.warrantyInformation}</p>
+          <p className='bg-gray-50'><RotateCcw />{productData?.returnPolicy}</p>
+        </div> */}
+        {/* Update above commented div 👇 */}
+        {/* Here we make infoItem array of objects in which we store icon, label, and value that help to reuse style instead of re-write the same code for same things. */}
+           <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+               {infoItems.map((item) => (
+                 <div
+                   key={item.label}
+                   className="flex items-start gap-3 rounded-xl border border-gray-100 bg-white p-3 transition-colors hover:border-blue-400"
+                 >
+                   <item.icon className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" />
+                   <div>
+                     <p className="text-xs font-medium text-gray-400">{item.label}</p>
+                     <p className="text-sm font-semibold text-gray-800">{item.value}</p>
+                   </div>
+                 </div>
+               ))}
+             </div>
         {/* Buttons */}
-        <div className='flex'>
-          <button>Add To Card</button>
-          <button>Add to Wishlist</button>
+        <div className='md: flex gap-3 h-12 text-xl  '>
+          <button className='bg-blue-400 hover:bg-blue-500 flex justify-center rounded-2xl items-center gap-1.5 font-sans w-full border text-xl text-white'><ShoppingCart className='fill-current'/> Add To Card</button>
+          <button className='flex justify-center items-center gap-1.5 text-blue-400 rounded-2xl hover:text-blue-500 font-sans w-full border'><Heart /> Add to Wishlist</button>
         </div>
       </div>
       </div>
