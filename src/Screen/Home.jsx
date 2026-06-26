@@ -2,6 +2,7 @@ import React from 'react'
 import Navbar from '../Component/Navbar'
 import Crousel from '../Component/Crousel'
 import ProductGrid from '../Component/ProductGrid'
+import Footer from '../Component/Footer'
 
 const Home = () => {
   return (
@@ -14,6 +15,9 @@ const Home = () => {
      </div>
      <div>
       <ProductGrid />
+     </div>
+     <div>
+      <Footer />
      </div>
     </div>
   )
