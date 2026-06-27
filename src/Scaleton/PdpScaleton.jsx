@@ -11,7 +11,7 @@ const PdpScaleton = () => {
             <div className="h-24 w-full animate-pulse rounded-lg bg-gray-200" />
             <div className="h-12 w-full animate-pulse rounded-lg bg-gray-200" />
           </div>
-        </div>
+        </div> 
       </div>
   )
 }
