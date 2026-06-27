@@ -8,12 +8,15 @@ import { Star, Truck, ShieldCheck, RotateCcw, PackageCheck } from 'lucide-react'
 const Pdp = () => {
 
   const { id } = useParams();
-
   const [productData, setProductData] = useState(null);
+  const [activeImgInd, setActiveImageInd] = useState(0);
+  const [image, setImage] = useState(productData?.thumbnail);
 
   const discountedPrice = productData?.price;
   const originalPrice = productData?.discountPercentage ? productData?.price / (1 - productData?.discountPercentage / 100) : productData?.price;
+  const imageArrLength = productData?.images.length;
 
+  const imgArr = [];
   const infoItems = [
     {icon: PackageCheck, label: "Availability", value:productData?.availabilityStatus},
     {icon: Truck, label: "Shipping", value:productData?.availabilityStatus},
@@ -21,10 +24,18 @@ const Pdp = () => {
     {icon: RotateCcw, label: "Returns", value:productData?.availabilityStatus}
   ] 
 
+  function handleLeft(){
+    setActiveImageInd((activeImgInd - 1 + imageArrLength) % imageArrLength)
+  }
+  function handleRight(){
+    setActiveImageInd((activeImgInd + 1) % imageArrLength);
+  }
+
   async function getData() {
     const apiRes = await fetch(`https://dummyjson.com/products/${id}`)
     const data = await apiRes.json();
     setProductData(data);
+    console.log(data)
   }  
 
   useEffect(() => {
@@ -32,21 +43,25 @@ const Pdp = () => {
   }, [])
 
   return (
-    <div className='border border-blue-500 bg-gray-50 mt-12 p-5'>
+    <div className=' w-full bg-gray-50 rounded-2xl mt-12 p-5 overflow-y-auto'>
       <Link to="/" > <div className='flex  py-4 gap-2 text-blue-500 font-bold'><ChevronLeft /><p> Back to products</p></div>
       </Link>
-      <div className='bg-white md:flex gap-1 '>
+      <div className='bg-white md:flex gap-1 rounded-2xl w-full '>
         {/* first containor */}
-      <div className=' md:flex md:flex-row-reverse bg-white'>
-        <div className='bg-gray-100 border border-pink-400'>
-          <ChevronLeft />
-          <img src={productData?.thumbnail} alt="" />
-          <ChevronRight />
+      <div className='md:w-[50%] md:flex gap-3 md:py-2.5 md:pl-2.5 md:justify-items-start bg-white'>
+        <div className='bg-gray-100 md:h-120 border border-gray-300 rounded-2xl  relative'>
+          <ChevronLeft onClick={handleLeft}
+           className='absolute bg-white top-[50%] rounded-full'/>
+          <img className='m-2 h-full p-5' src={productData?.images[activeImgInd]} alt="" />
+          <ChevronRight onClick={handleRight}
+           className='absolute bg-white top-[50%] right-0 rounded-full'/>
         </div>
-        <div className='border border-blue-400 h-15 w-full flex gap-2 p-1 md:flex-col'>
+        <div className='  w-full md:w-18 flex md:mr-2 gap-2 p-1 md:flex-col'>
           {productData?.images.map((img, index)=>{
             return(
-              <div key={index} className='h-full w-15 border-2 rounded-sm border-blue-300'>
+              <div key={index}
+              onClick={()=>{setActiveImageInd(index)}}
+               className={`h-full md:h-15 w-15 ${activeImgInd == index ? "border-2 rounded-sm border-blue-300": "border-2 rounded-sm border-gray-500"}`}>
                 <img src={img} alt="" className='h-full w-full'/>
               </div>
             )
@@ -56,17 +71,17 @@ const Pdp = () => {
 
 
       {/* Second containor */}
-      <div className='bg-white md:mx-2.5'>
+      <div className='bg-white md:mx-2.5 py-2.5 md:w-[50%] '>
         {/* Brand and category DONE.... */}
-        <div className='flex gap-5 text-xs'>
+        <div className='flex gap-5 text-xs py-2'>
           <span className='bg-gray-100 font-bold rounded-xl p-1.5'>{productData?.category}</span>
           <span className='bg-blue-100 text-blue-500 font-bold rounded-xl p-1.5 '>{productData?.brand}</span>
         </div>
         {/* title and reating */}
         
-          <h2 className='font-bold text-lg'>{productData?.title}</h2>
+          <h2 className='font-bold text-lg py-2'>{productData?.title}</h2>
         {/* Rating and In-stock value */}
-        <div className='flex gap-4'>
+        <div className='flex gap-4 py-2'>
           <div className="flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-amber-600 border border-amber-200">
                  <Star className="h-4 w-4 fill-current" />
                  <span className="text-sm font-bold">{productData?.rating}</span>
@@ -74,11 +89,11 @@ const Pdp = () => {
           <span className={`text-sm font-bold rounded-full px-2 py-1 ${productData?.rating > 0 ? "bg-green-100 text-green-400" : "bg-red-100 text-red-400"}`}>In stock: {productData?.stock}</span>
         </div>
         {/* final price */}
-        <div className=' bg-gray-100 px-3 py-2 rounded-xl flex gap-3 items-baseline '>
+        <div className='bg-gray-100 px-3 py-2 rounded-xl flex gap-3 items-baseline '>
            <span className="text-3xl font-black text-gray-900">${discountedPrice?.toFixed(2)}</span>
           <span className='line-through text-gray-500'>${originalPrice?.toFixed(2)}</span>
         </div>
-        <div className='font-semibold text-gray-500 text-sm'>
+        <div className='py-2 font-semibold text-gray-500 text-sm'>
           <p>{productData?.description}</p>
         </div>
         {/* some  */}
@@ -105,7 +120,7 @@ const Pdp = () => {
                ))}
              </div>
         {/* Buttons */}
-        <div className='md: flex gap-3 h-12 text-xl  '>
+        <div className='md:flex gap-3 h-12 text-xl mt-2.5  '>
           <button className='bg-blue-400 hover:bg-blue-500 flex justify-center rounded-2xl items-center gap-1.5 font-sans w-full border text-xl text-white'><ShoppingCart className='fill-current'/> Add To Card</button>
           <button className='flex justify-center items-center gap-1.5 text-blue-400 rounded-2xl hover:text-blue-500 font-sans w-full border'><Heart /> Add to Wishlist</button>
         </div>
