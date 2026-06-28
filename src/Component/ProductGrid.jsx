@@ -1,23 +1,10 @@
 import React, { useEffect, useState } from "react"
-import ProductCard from "./ProductCard"
+import ProductCard from "./ProductCard";
+import UseGetHomeProductData from "../CustomHooks/UseGetHomeProductData";
 
 const ProductGrid = () => {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [productDataArr, setProductDataArr] = useState([]) 
-  const [loading, setLoading] = useState(false)
-
-  async function getData() {
-    setLoading(true)
-    const apiData = await fetch(`https://dummyjson.com/products?limit=12&skip=${(currentPage - 1) * 12}`)
-    const data = await apiData.json()
-    setProductDataArr(data.products)
-    setLoading(false)
-  }
-
-  useEffect(() => {
-    getData()
-    
-  }, [currentPage])
+  const [currentPage, setCurrentPage] = useState(1);
+  const {productDataArr, loading, error} = UseGetHomeProductData(currentPage);
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-8">
