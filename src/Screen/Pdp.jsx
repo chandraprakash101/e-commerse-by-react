@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import PdpScaleton from '../Scaleton/PdpScaleton';
 import { Star, Truck, ShieldCheck, RotateCcw, PackageCheck } from 'lucide-react';
 import UseGetProductById from '../CustomHooks/UseGetProductById';
+import ReviewAccordion from '../Component/ReviewAccordian';
 
 const Pdp = () => {
   const { id } = useParams();
@@ -150,6 +151,7 @@ const Pdp = () => {
         </div>
 
       </div>
+      <ReviewAccordion reviewData={productData.reviews} />
     </div>
   )
 }

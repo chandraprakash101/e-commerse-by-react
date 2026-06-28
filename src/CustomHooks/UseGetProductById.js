@@ -13,6 +13,7 @@ const UseGetProductById = (id) => {
       const apiRes = await fetch(`https://dummyjson.com/products/${id}`);
       const data = await apiRes.json();
       setProductData(data);
+      console.log(data)
     } catch (error) {
       console.log("Error : ", error);
     } finally {
