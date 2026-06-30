@@ -19,7 +19,7 @@ export default function NavIcons() {
       >
         <User />
         {/* {isDroupDownOpen && ( */}
-        <div className="absolute right-0 top-full opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 transform translate-y-4 group-hover:translate-y-2 bg-white text-gray-800 border border-gray-100 min-w-[220px] shadow-xl rounded-xl p-1.5 z-50 before:absolute before:top-[-16px] before:left-0 before:w-full before:h-[16px] before:content-[''] backdrop-blur-sm">
+        <div className=" absolute right-0 top-full opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 transform translate-y-4 group-hover:translate-y-2 bg-white text-gray-800 border border-gray-100 min-w-[220px] shadow-xl rounded-xl p-1.5 z-50 before:absolute before:top-[-16px] before:left-0 before:w-full before:h-[16px] before:content-[''] backdrop-blur-sm">
 
           {/* Header Section (Dropdown ko premium look dene ke liye) */}
           <div className="px-3 py-2.5 mb-1 bg-gray-50/80 rounded-lg border-b border-gray-100">

@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Search, Heart, User, Menu, X } from 'lucide-react';
 import Logo from './Logo';
 import Searchbar from './Searchbar';
 import NavIcons from './NavIcons';
 import { Link } from 'react-router-dom';
+import { ThemeContext } from '../Store/ThemeProvider';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const {theme, setTheme} = useContext(ThemeContext);
+  console.log(theme)
 
   return (
     <nav className="bg-white shadow-md fixed w-full h-12 top-0 left-0 z-50 ">
