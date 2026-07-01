@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Search, X } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom';
+import { ThemeContext } from '../Store/ThemeProvider';
 
 const Searchbar = () => {
-
+  const {theme, setTheme} = useContext(ThemeContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchQueryArr, setSearchQueryArr] = useState([]);
   const [activeSuggestionInd, setActiveSuggestionInd] = useState(-1);
@@ -69,22 +70,22 @@ const Searchbar = () => {
   }, [searchQuery])
 
   return (
-    <div className='w-full h-full  relative items-center'>
+    <div className={`${theme == 'light' ? "bg-gray-200 text-gray-900" : "bg-gray-800 text-[#F7F7F7]"} w-full h-full relative items-center`}>
       <div className='w-full h-full flex relative items-center'>
         <input onChange={handleText} 
         onKeyDown={handleKeyDown}
         value={searchQuery}
-        className='w-full h-full border-none outline-none  px-2 bg-gray-100 text-gray-900 rounded-xl focus:ring-2 focus:ring-indigo-500'
+        className={`w-full h-full border-none outline-none px-2 rounded-xl focus:ring-2 focus:ring-indigo-500 ${theme == 'light' ? "bg-gray-100 text-gray-900" : "bg-gray-700 text-[#F7F7F7]"}`}
           type="text"
           placeholder='Enter Your Items ' />
-        {searchQuery.trim().length != 0 ? <X className='absolute right-2 cursor-pointer' onClick={clearInputText}/> : <Search className='absolute right-2' />}
+        {searchQuery.trim().length != 0 ? <X className={`absolute right-2 cursor-pointer ${theme == 'dark' ? 'text-[#F7F7F7]' : 'text-gray-900'}`}/> : <Search className={`absolute right-2 ${theme == 'dark' ? 'text-[#F7F7F7]' : 'text-gray-900'}`} />}
       </div>
-      <div className='w-full overflow-y-auto max-h-70 flex flex-col gap-1 bg-white shadow-xl rounded-b-sm'>
+      <div className={`w-full ${theme == 'light' ? "bg-gray-200 text-gray-900" : "bg-gray-900 text-[#F7F7F7]"} overflow-y-auto max-h-70 flex flex-col gap-1 shadow-xl rounded-b-sm`}>
         {
           searchQuery.length != 0 && searchQueryArr.map((productArr, index) => {
             return (
               <Link to={`/product/${productArr.id}`}>
-                <p key={productArr.id} className={`m-1 ${activeSuggestionInd == index ? "bg-indigo-400 text-white" : "bg-gray-100"} rounded-sm cursor-pointer p-1 hover:bg-indigo-400 hover:text-white`} >{productArr.title}</p>
+                <p key={productArr.id} className={`m-1 rounded-sm cursor-pointer p-1 transition-colors ${activeSuggestionInd == index ? "bg-indigo-400 text-white" : theme == 'light' ? "bg-gray-200 text-gray-900 hover:bg-indigo-400 hover:text-white" : "bg-gray-800 text-[#F7F7F7] hover:bg-indigo-400 hover:text-white"}`} >{productArr.title}</p>
               </Link>
             )
           })

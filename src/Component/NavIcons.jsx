@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Heart, User, ShoppingCart, Package, LogOut } from 'lucide-react'
+import TheamToggle from '../DaisyUIComponents/TheamToggle'
 
 export default function NavIcons() {
   // const [isDroupDownOpen, setIsDroupDownOpen] = useState(false);
@@ -40,6 +41,11 @@ export default function NavIcons() {
             <div className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 rounded-lg cursor-pointer hover:bg-blue-50 hover:text-blue-600 transition-all duration-150">
               <Package className="w-4 h-4 opacity-75" />
               <span>Orders</span>
+            </div>
+
+            <div className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 rounded-lg cursor-pointer hover:bg-blue-50 hover:text-blue-600 transition-all duration-150">
+              <TheamToggle className=" w-8 h-8 opacity-75 text-gray-600 group-hover:text-blue-600"/>
+              <span>Theme</span>
             </div>
 
             {/* Divider Line */}

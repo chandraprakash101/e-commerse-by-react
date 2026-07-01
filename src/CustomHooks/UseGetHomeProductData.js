@@ -20,7 +20,7 @@ const UseGetHomeProductData = (currentPage) => {
       console.log("Something went wrong during fetching Home screen data");
     } finally {
       setLoading(false);
-    }
+    } 
   }
 
   useEffect(() => {

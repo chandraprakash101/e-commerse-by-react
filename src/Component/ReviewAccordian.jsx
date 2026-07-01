@@ -1,98 +1,228 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Star, ChevronUp, ChevronDown } from "lucide-react";
+import { ThemeContext } from "../Store/ThemeProvider";
 
 const ReviewAccordian = ({ reviewData }) => {
-    const[activeIndex, setActiveIndex] = useState(null)
+    const[activeIndex, setActiveIndex] = useState(null);
+    const {theme, setTheme} = useContext(ThemeContext);
 
     return (
-        <div className=" m-1.5 p-1 bg-gray-100 rounded-xl">
-            <h1 className="pl-2 text-2xl font-semibold">Customer Reviews</h1>
-            <div className="">
+        <div
+            className="m-1.5 p-4 rounded-xl transition-colors duration-300 mt-6"
+            style={{
+                backgroundColor: theme === "dark" ? "#27272a" : "#f3f4f6",
+            }}
+        >
+            <h1
+                className="pl-2 text-2xl font-bold mb-4"
+                style={{
+                    color: theme === "dark" ? "#ffffff" : "#111827",
+                }}
+            >
+                Customer Reviews
+            </h1>
+            <div className="space-y-3">
                 {reviewData.map((data, index) => {
                     const rating = data.rating;
                     return (
-                        <Reviews data={data} rating ={rating} index={index} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
+                        <Reviews
+                            key={index}
+                            data={data}
+                            rating={rating}
+                            index={index}
+                            activeIndex={activeIndex}
+                            setActiveIndex={setActiveIndex}
+                            theme={theme}
+                        />
                     );
                 })}
             </div>
         </div>
     );
+   
 };
 
 export default ReviewAccordian;
 
 
 
-const Reviews = ({data, rating, index, activeIndex, setActiveIndex}) => {
+const Reviews = ({data, rating, index, activeIndex, setActiveIndex,theme}) => {
     console.log("Rating ",rating)
     console.log("index ",index)
   return (
-   <div key={index} className="border border-gray-200 bg-white transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-100 hover:border-blue-300 rounded-xl m-2">
-
-                            {/* === MAIN CONTAINER: Isme hum layout ko padding dete hain === */}
-                            <div className="p-4">
-
-                                {/* SECTION 1: HEADER (Yeh hamesha screen par dikhega) */}
-                                <div className="w-full flex items-center justify-between cursor-pointer">
-
-                                    {/* Left Side: Name and Stars */}
-                                    <div className="flex-1 text-left">
-                                        <div className="flex justify-between items-center">
-                                            <h2>{data.reviewerName}</h2>
-                                            <div className="flex">
-                                                {[...Array(5)].map((_, i) => {
-                                                    return (
-                                                        <Star
-                                                            key={i}
-                                                            size={16}
-                                                            className={
-                                                                i < rating
-                                                                    ? "fill-amber-500 text-amber-500"
-                                                                    : "text-gray-300"
-                                                            }
-                                                        />
-                                                    );
-                                                })}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Right Side: Chevron Arrow */}
-                                    <div className="ml-4" onClick={()=>{activeIndex == index ? setActiveIndex(null) : setActiveIndex(index)}}>
-                                       {activeIndex == index ?  <ChevronUp /> :  <ChevronDown />}
-                                    </div>
-                                </div>
-
-
-                                {/* SECTION 2: HIDDEN BODY (Yeh wala div by-default hide hoga) */}
-                                {/* Abhi bas iska layout bana diya hai, baad me hum ispar condition laga kar toggle karenge */}
-                                {activeIndex == index && (
-                                    <div className={`mt-4 pt-3 border-t border-gray-100`}>
-
-                                    {/* 1. Review ka main content/text message */}
-                                    <p className="text-sm text-gray-600 leading-relaxed">
-                                        {data.comment || "This is a placeholder for the hidden review text/content."}
-                                    </p>
-
-                                    {/* 2. Meta info section (Date, verified badge etc.) */}
-                                    <div className="mt-3 flex items-center justify-between text-xs text-gray-400">
-                                        <p>Posted on: {data.date ? new Date(data.date).toLocaleDateString() : "Date Placeholder"}</p>
-                                        <span className="text-blue-500 font-medium">✓ Verified Purchase</span>
-                                    </div>
-
-                                    {/* 3. Helpful buttons section */}
-                                    <div className="mt-4 flex gap-2 text-xs">
-                                        <button className="border px-3 py-1.5 rounded hover:bg-gray-50">👍 Helpful</button>
-                                        <button className="border px-3 py-1.5 rounded hover:bg-gray-50">👎 Report</button>
-                                    </div>
-
-                                </div>
-                                )}
-                                {/* === HIDDEN BODY ENDS === */}
-
+    <div
+            className="border rounded-xl shadow-sm transition-all duration-300 ease-in-out"
+            style={{
+                borderColor: theme === "dark" ? "#404040" : "#e5e7eb",
+                backgroundColor: theme === "dark" ? "#18181b" : "#ffffff",
+                borderWidth: activeIndex === index ? "1px" : "1px",
+            }}
+            onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor =
+                    theme === "dark" ? "#3b82f6" : "#93c5fd";
+            }}
+            onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor =
+                    theme === "dark" ? "#404040" : "#e5e7eb";
+            }}
+        >
+            {/* === MAIN CONTAINER === */}
+            <div className="p-4">
+                {/* SECTION 1: HEADER */}
+                <div className="w-full flex items-center justify-between cursor-pointer select-none">
+                    {/* Left Side: Name and Stars */}
+                    <div className="flex-1 text-left">
+                        <div className="flex justify-between items-center">
+                            <h2
+                                className="font-semibold"
+                                style={{
+                                    color: theme === "dark" ? "#f5f5f5" : "#111827",
+                                }}
+                            >
+                                {data.reviewerName}
+                            </h2>
+                            <div className="flex gap-0.5">
+                                {[...Array(5)].map((_, i) => (
+                                    <Star
+                                        key={i}
+                                        size={15}
+                                        className={
+                                            i < rating
+                                                ? "fill-amber-500 text-amber-500"
+                                                : theme === "dark"
+                                                ? "text-neutral-700"
+                                                : "text-gray-200"
+                                        }
+                                    />
+                                ))}
                             </div>
                         </div>
-  )
+                    </div>
+
+                    {/* Right Side: Chevron Arrow toggler */}
+                    <div
+                        className="ml-4 p-1 rounded-lg transition-colors"
+                        style={{
+                            color:
+                                theme === "dark" ? "#60a5fa" : "#3b82f6",
+                            backgroundColor:
+                                theme === "dark" ? "#27272a" : "#f9fafb",
+                        }}
+                        onClick={() => {
+                            activeIndex == index
+                                ? setActiveIndex(null)
+                                : setActiveIndex(index);
+                        }}
+                    >
+                        {activeIndex == index ? (
+                            <ChevronUp size={20} />
+                        ) : (
+                            <ChevronDown size={20} />
+                        )}
+                    </div>
+                </div>
+
+                {/* SECTION 2: HIDDEN BODY */}
+                {activeIndex == index && (
+                    <div
+                        className="mt-4 pt-4 animate-in fade-in duration-200"
+                        style={{
+                            borderTop:
+                                theme === "dark"
+                                    ? "1px solid #404040"
+                                    : "1px solid #f3f4f6",
+                        }}
+                    >
+                        {/* 1. Review main description text */}
+                        <p
+                            className="text-sm leading-relaxed"
+                            style={{
+                                color:
+                                    theme === "dark"
+                                        ? "#d4d4d8"
+                                        : "#4b5563",
+                            }}
+                        >
+                            {data.comment ||
+                                "This is a placeholder for the hidden review text/content."}
+                        </p>
+
+                        {/* 2. Meta info section */}
+                        <div className="mt-4 flex items-center justify-between text-xs">
+                            <p
+                                style={{
+                                    color:
+                                        theme === "dark"
+                                            ? "#a1a1a1"
+                                            : "#9ca3af",
+                                }}
+                            >
+                                Posted on:{" "}
+                                {data.date
+                                    ? new Date(data.date).toLocaleDateString()
+                                    : "Date Placeholder"}
+                            </p>
+                            <span
+                                className="font-medium"
+                                style={{
+                                    color:
+                                        theme === "dark"
+                                            ? "#60a5fa"
+                                            : "#3b82f6",
+                                }}
+                            >
+                                ✓ Verified Purchase
+                            </span>
+                        </div>
+
+                        {/* 3. Helpful feedback actions layout */}
+                        <div className="mt-4 flex gap-2 text-xs">
+                            <button
+                                className="px-3 py-1.5 rounded-lg font-medium transition-colors"
+                                style={{
+                                    borderColor:
+                                        theme === "dark"
+                                            ? "#52525b"
+                                            : "#e5e7eb",
+                                    color:
+                                        theme === "dark"
+                                            ? "#d4d4d8"
+                                            : "#4b5563",
+                                    backgroundColor:
+                                        theme === "dark"
+                                            ? "#27272a"
+                                            : "#f9fafb",
+                                    border: "1px solid",
+                                }}
+                            >
+                                👍 Helpful
+                            </button>
+                            <button
+                                className="px-3 py-1.5 rounded-lg font-medium transition-colors"
+                                style={{
+                                    borderColor:
+                                        theme === "dark"
+                                            ? "#52525b"
+                                            : "#e5e7eb",
+                                    color:
+                                        theme === "dark"
+                                            ? "#d4d4d8"
+                                            : "#4b5563",
+                                    backgroundColor:
+                                        theme === "dark"
+                                            ? "#27272a"
+                                            : "#f9fafb",
+                                    border: "1px solid",
+                                }}
+                            >
+                                👎 Report
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
 }
 
 
