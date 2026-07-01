@@ -13,7 +13,7 @@ const Home = () => {
      <div className='mt-14'>
       <Crousel />
      </div>
-     <div>
+     <div className='w-full'>
       <ProductGrid />
      </div>
      <div>

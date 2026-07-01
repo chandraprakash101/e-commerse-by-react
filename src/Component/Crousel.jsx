@@ -5,8 +5,16 @@ import Laptop from '../Accest/laptop.avif'
 import Shoes from '../Accest/shoes.jpg'
 import SkinCare from '../Accest/skin-care.jpg'
 import { ArrowBigLeft, ArrowBigRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import ProductCategory from '../Screen/ProductCategory'
 
-const images = [Grocery,HomeDecoration,Laptop,Shoes,SkinCare]
+// const images = [Grocery,HomeDecoration,Laptop,Shoes,SkinCare]
+const images = [{ image: Grocery, category: "groceries" },
+{ image: HomeDecoration, category: "home-decoration" },
+{ image: Laptop, category: "laptops" },
+{ image: Shoes, category: "mens-shoes" },
+{ image: SkinCare, category: "skin-care" }
+]
 
 const Crousel = () => {
     const [activeIndex, setActiveIndex] = useState(0);
@@ -53,15 +61,17 @@ const Crousel = () => {
         addTimer();
     }
     return (
-        <div className='w-full h-55 relative' 
+        <div className='w-full h-55 relative'
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}>
             <div className='cursor-pointer absolute top-[40%] bg-amber-50 rounded-2xl flex justify-center items-center lg:p-1'
-            onClick={handleLeft}><ArrowBigLeft /></div>
-            <img src={images[activeIndex]} alt="" 
-            className='h-full w-full' />
+                onClick={handleLeft}><ArrowBigLeft /></div>
+            <Link to={`/productCategory/${images[activeIndex].category}`}>
+                <img src={images[activeIndex].image} alt=""
+                    className='h-full w-full cursor-pointer' />
+            </Link>
             <div className='cursor-pointer absolute right-1 top-[40%] bg-amber-50 rounded-2xl flex justify-center items-center lg:p-1'
-            onClick={handleRight}><ArrowBigRight /></div>
+                onClick={handleRight}><ArrowBigRight /></div>
         </div>
     )
 }

@@ -7,7 +7,7 @@ const TheamToggle = ({ className }) => {
 
         <label className={`swap swap-rotate flex justify-center items-center h-8 w-8 ${className}`}>
 
-            <input type="checkbox" className="theme-controller" value="synthwave" onChange={()=>{theme === 'light' ?  setTheme('dark') : setTheme('light')}} />
+            <input type="checkbox" className="theme-controller" value="synthwave" checked={theme === 'dark'} onChange={()=>{theme === 'light' ?  setTheme('dark') : setTheme('light')}} />
 
             <svg
                 className="swap-off h-8 w-8 fill-current"

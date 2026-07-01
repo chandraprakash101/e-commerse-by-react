@@ -17,9 +17,11 @@ const Navbar = () => {
   return (
     <nav className={`${theme === 'light' ? lightTheme : darkTheme} shadow-md fixed w-full h-14 top-0 left-0 z-50 border-b transition-colors duration-300`}>
       <div className='w-full flex sm:px-1 justify-between items-center mx-auto h-full'>
+       <Link to={'/'}>
         <div className='mx-5'>
           <Logo />
         </div>
+       </Link>
 
         <div className='hidden lg:flex h-[75%] w-xl items-center'>
           <Searchbar />

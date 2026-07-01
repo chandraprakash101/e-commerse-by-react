@@ -11,7 +11,7 @@ const ProductGrid = () => {
   const darkTheme = "bg-[#181818] text-[#F7F7F7] border-neutral-800";
 
   return (
-    <section className={`${theme === 'light' ? lightTheme : darkTheme} mx-auto max-w-7xl px-4 py-8`}>
+    <section className={` ${theme === 'light' ? lightTheme : darkTheme} w-full px-4 py-8`}>
       <div className="mb-6 flex items-center justify-between">
         <h2
           className="text-xl font-bold"
